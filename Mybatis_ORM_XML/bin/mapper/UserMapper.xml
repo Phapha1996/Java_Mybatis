@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.fage.mapper.UserMapper">
+	
+	<!-- 一对多映射,User与orders -->
+	<resultMap type="org.fage.domain.User" id="UserMappedOrders">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="birthday" property="birthday"/>
+		
+		<!-- 配置User中的ordersList属性，让其能够映射成功 -->
+		<collection property="ordersList" ofType="org.fage.domain.Orders">
+			<id column="orders_id" property="id"/>
+			<result column="createDate" property="createDate"/>
+			<result column="num" property="num"/>
+			
+			<!-- 循环嵌套，让关系是双向的，你中有我我中有你 -->
+			<!-- <association property="user" javaType="org.fage.domain.User">
+				<id column="id" property="id"/>
+				<result column="username" property="username"/>
+				<result column="birthday" property="birthday"/>
+			</association> -->
+		</collection>
+	</resultMap>
+	
+	<!-- 多对多，从User开始一直联系到Items -->
+	<resultMap type="org.fage.domain.User" id="UserMappedItems">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="birthday" property="birthday"/>
+		<!-- User中的orderList -->
+		<collection property="ordersList" ofType="org.fage.domain.Orders">
+			<id column="ordersid" property="id"/>
+			<result column="num" property="num"/>
+			<result column="createDate" property="createDate"/>
+			<!-- Orders中的orderdetailList -->
+			<collection property="orderdetailList" ofType="org.fage.domain.Orderdetail">
+				<id column="orderdetailid" property="id"/>
+				<result column="discription" property="discription"/>
+				<!-- Orderdetail中的items -->
+				<association property="items" javaType="org.fage.domain.Items">
+					<id column="itemsid" property="id"/>
+					<result column="itname" property="itname"/>
+					<result column="price" property="price"/>
+					<result column="launchTime" property="launchTime"/>			
+				</association>
+			</collection>
+		</collection>
+	</resultMap>
+	
+	
+	
+	<!-- 一对多 -->
+	<select id="findById" parameterType="int" resultMap="UserMappedOrders">
+		SELECT u.*,o.id as orders_id,o.num,o.createDate 
+		FROM t_user u,t_orders o
+		WHERE u.id=o.user_id 
+		AND u.id=#{id}
+	</select>
+	
+	<!-- 多对多 -->
+	<select id="findItemsByUserId" parameterType="int" resultMap="UserMappedItems">
+		SELECT u.*,
+		o.num,o.createDate,o.id as ordersid,
+		od.id as orderdetailid,od.discription,
+		i.id as itemsid,i.itname,i.price,i.launchTime
+		FROM t_user u,t_orders o,t_orderdetail od,t_items i
+		WHERE u.id=o.user_id
+		AND od.orders_id=o.id 
+		AND od.items_id=i.id 
+		AND u.id=#{id}
+	</select>
+</mapper>

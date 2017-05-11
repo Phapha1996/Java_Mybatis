@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 测试DMISql与sql片段 -->
+<mapper namespace="org.fage.mapper.UserMapper">
+	
+	<!-- 定义sql片段 ;
+		id:sql片段唯一标识;
+		经验：要基于单表定义sql片段，这样重用性高，在sql片段中不要加入where;
+	-->
+    <sql id="query_user_likeName_birthday">
+    	<if test="user!=null">
+	    		<if test="user.birthday!=null">
+	    			AND birthday=#{user.birthday}
+	    		</if>
+	    		<if test="user.username!=null and user.username!=''">
+	    			AND username LIKE '%${user.username}%'
+	    		</if>
+	    </if>
+    </sql>
+    
+    
+     <!-- 复杂查询，根据年龄与模糊姓、名查询 -->
+	 <!-- 动态sql -->    
+	 <!-- 原始sql：SELECT * FROM t_user WHERE birthday=#{user.birthday} AND username LIKE '%${user.username} -->
+<!-- <select id="findByLikeNameAndBirthday" parameterType="org.fage.domain.UserQueryVo" resultType="org.fage.domain.User">
+    	SELECT * FROM t_user 
+    	<where>
+	    	<if test="user!=null">
+	    		 加入了where标签之后，生成的sql在where之后自动剔除第一个and
+	    		<if test="user.birthday!=null">
+	    			AND birthday=#{user.birthday}
+	    		</if>
+	    		<if test="user.username!=null and user.username!=''">
+	    			AND username LIKE '%${user.username}%'
+	    		</if>
+	    	</if> 
+    	</where>
+    </select> -->
+    
+    
+    <!-- 复杂查询，根据年龄与模糊姓、名查询 -->
+	<!-- 引用sql片段 -->    
+    <select id="findByLikeNameAndBirthday" parameterType="org.fage.domain.UserQueryVo" resultType="org.fage.domain.User">
+    	SELECT * FROM t_user 
+    	<where>
+	    	<!-- 如果要引用别的mapper文件的sql片段,要加入namespace -->
+	    	<include refid="query_user_likeName_birthday"></include>
+	    	<!-- 在这里可以引用别的sql片段 -->
+    	</where>
+    </select>
+</mapper>

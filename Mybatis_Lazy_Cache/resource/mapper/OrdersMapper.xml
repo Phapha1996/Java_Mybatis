@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.fage.mapper.OrdersMapper">
+	<cache/>
+
+	<!-- 一对一的懒加载 -->
+	<resultMap type="org.fage.domain.Orders" id="OrderMappedUser">
+		<id column="id" property="id"/>
+		<result column="num" property="num"/>
+		<result column="createDate" property="createDate"/>
+		<!-- 设置懒加载，select属性会把colum属性值作为id传给关联需要的懒查询Mappedstatement -->
+		<association property="user" javaType="org.fage.domain.User" select="org.fage.mapper.UserMapper.findById" column="user_id" fetchType="lazy"/>
+	</resultMap>
+	
+	<select id="findById" resultMap="OrderMappedUser" parameterType="int" >
+		SELECT * FROM t_orders WHERE id=#{id}
+	</select>
+	
+	<select id="findAll" resultType="org.fage.domain.Orders">
+		SELECT * FROM t_orders
+	</select>
+</mapper>

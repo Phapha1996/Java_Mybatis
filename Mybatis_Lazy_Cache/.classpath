@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resource"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mybatis"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/mysqlconnector"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/ehcache-core-2.6.5.jar" sourcepath="C:/Users/Administrator/Desktop/JEE框架/mybatis/第二天/res/jar包/ehcache2.6.5/mybatis-ehcache-1.0.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/mybatis-ehcache-1.0.2.jar" sourcepath="C:/Users/Administrator/Desktop/JEE框架/mybatis/第二天/res/jar包/ehcache2.6.5/mybatis-ehcache-1.0.2-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

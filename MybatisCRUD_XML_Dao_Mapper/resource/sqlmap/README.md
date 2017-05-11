@@ -1,0 +1,1 @@
+基础的sql mappedStatement文件，约束比较少

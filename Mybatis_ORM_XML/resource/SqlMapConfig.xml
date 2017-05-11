@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration  
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-config.dtd">  
+<configuration>  
+  	<!-- 加载db.properties属性文件 -->
+  	<properties resource="db.properties"></properties>
+  	
+  	<!-- 别名定义 -->
+	<typeAliases>
+		<!-- 单个别名定义,在mapper.xml文件中resultType、parameterType就可以简写为User了 -->
+		<!-- <typeAlias type="org.fage.domain.User" alias="User"/> -->
+		
+		<!-- 整个包都做别名定义，用类名或者首字母小写 -->
+		<!-- <package name="org.fage.domain"/> -->
+	</typeAliases>
+  	
+    <!-- 配置mybatis的环境信息，与spring整合，该信息由spring来管理 -->  
+    <environments default="development">  
+        <environment id="development">  
+            <!-- 配置JDBC事务控制，由mybatis进行管理 -->  
+            <transactionManager type="JDBC"></transactionManager>  
+            <!-- 配置数据源，采用mybatis连接池 -->  
+            <dataSource type="POOLED">  
+                <property name="driver" value="${jdbc.driver}" />  
+                <property name="url" value="${jdbc.url}" />  
+                <property name="username" value="${jdbc.username}" />  
+                <property name="password" value="${jdbc.password}" />
+                
+               <!--  <property name="driver" value="com.mysql.jdbc.Driver" />  
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatistest" />  
+                <property name="username" value="root" />  
+                <property name="password" value="root" />   -->
+            </dataSource>
+        </environment>  
+    </environments>  
+  
+    <!-- 加载映射文件 -->  
+    <mappers>  
+    	<mapper resource="mapper/OrdersMapper.xml"/>
+    	<mapper resource="mapper/UserMapper.xml"/>
+    </mappers>  
+</configuration>  

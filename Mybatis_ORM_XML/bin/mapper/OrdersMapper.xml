@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.fage.mapper.OrdersMapper">
+	<!-- 取出Orders的时候，把User一起取出来放到Orders的属性里 -->
+	<resultMap type="org.fage.domain.Orders" id="OrderMappedUser">
+		<id column="id" property="id"/>
+		<result column="num" property="num"/>
+		<result property="createDate" column="createDate"/>
+		
+		<association property="user" javaType="org.fage.domain.User">
+			<id column="userid" property="id"/>
+			<result column="username" property="username"/>
+			<result column="birthday" property="birthday"/>
+		</association>
+	</resultMap>
+	
+	<!-- 一对一映射 -->	
+    <select id="findById" parameterType="int" resultMap="OrderMappedUser">
+    	SELECT o.*,u.id as userid, u.username, u.birthday
+    	FROM t_orders o,t_user u 
+    	WHERE u.id=o.user_id AND o.id=#{id}
+    </select>
+</mapper>

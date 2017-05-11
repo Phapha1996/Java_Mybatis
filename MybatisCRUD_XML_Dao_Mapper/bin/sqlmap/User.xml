@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- namespace命名空间，sql进行分类化管理 -->
+<!-- 使用mapper接口开发的话，namspace有特殊意义 -->
+<mapper namespace="userMapper">
+
+	<!-- 映射文件中很多sql语句 -->
+	<!-- id:为当前sql（mappedStatement）做一个唯一标识 -->
+	<!-- parameerType:sql中的占位符#{}为int类型 -->
+	<!-- resultType:返回值类型 -->
+    <select id="findById" parameterType="int" resultType="org.fage.domain.User">
+        SELECT * FROM t_user WHERE id = #{id}
+    </select>
+    
+    
+    <!-- 根据用户名模糊查找 -->
+    <!-- 返回虽然是一个集合，但是单条数据类型还是User，所以这里的resultType为User -->
+    <!-- ${}表示拼接占位串，而#{}表示占位符，这是不一样的，${}容易引起sql注入问题 -->
+    <select id="findByLikeName" resultType="org.fage.domain.User" parameterType="java.lang.String">
+    	SELECT * FROM t_user WHERE username Like '%${value}%'
+    </select>
+    
+    
+    <!-- 开始插入用户,其实#{}中也是OGNL语言，这边的${}中必须跟domain对象的属性名字相同 -->
+    <insert id="addOneUser" parameterType="org.fage.domain.User">
+    	<!-- 自增主键返回，插入记录后，返回id给user对象，只适用自增主键 -->
+    	<!-- keyproperty表示数据库id值送回给哪个domain对象(parameterType)的哪个属性(User的id属性) -->
+    	<selectKey order="AFTER" keyProperty="id" resultType="int">
+    		SELECT LAST_INSERT_ID()
+    	</selectKey>
+    	<!-- uuid解决方案 -->
+        <!-- 
+        <selectKey order="BEFORE" keyProperty="id" resultType="java.lang.String">
+    		SELECT uuid()
+    	</selectKey> 
+    	INSERT INTO t_user(id,username,birthday) values(#{id},#{username},#{birthday})
+    	-->
+    	INSERT INTO t_user(username,birthday) values(#{username},#{birthday})
+    </insert>
+    
+    <!-- 根据id删除用户 -->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+    	DELETE FROM t_user WHERE id=#{id}
+    </delete>
+    
+    <!-- 更新用户 ,传入的是pojo对象-->
+    <update id="updateUser" parameterType="org.fage.domain.User">
+    	UPDATE t_user SET username=#{username},birthday=#{birthday} where id=#{id}
+    </update>
+    
+</mapper>

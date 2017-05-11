@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 使用mapper接口开发模式，namspace必须要与Mapper接口全名相应 -->
+<mapper namespace="org.fage.mapper.UserMapper">
+	<!-- Mapper接口开发模式，mapper.xml的id要与Mapper.java方法名称相应 -->
+	<!-- Mapper接口开发模式，parameterType要与Mapper.java方法参数类型相应 -->
+	<!-- Mapper接口开发模式，resultType要与Mapper.java方法返回值类型相应 -->
+	
+	
+	<!-- 其实很类似JPA中的@Column注解 -->
+	<!-- 如果数据库列名与POJO的属性名不一致，可以使用resultMap对他们进行一个映射,
+	在statement引用的时候直接resultMap="columnMap"就可以，这个resultMap的id属性只是为了被别人方便引用 -->
+	<resultMap type="org.fage.domain.User" id="colunmMap">
+		<!-- 主键与POJO唯一标识映射 -->
+		<id column="_id" property="id"/>
+		<!-- 数据库列名与其他属性的映射 -->
+		<result column="_username" property="username"/>
+		<result column="_birthday" property="birthday"/>
+	</resultMap>
+	
+
+	<!-- 通过id查询 -->
+    <select id="findById" parameterType="int" resultType="org.fage.domain.User"><!-- 如果用了别名，resultType直接写User即可 -->
+        SELECT * FROM t_user WHERE id = #{id}
+    </select>
+    
+    <!-- 根据姓名模糊查询 -->
+    <select id="findByLikeName" resultType="org.fage.domain.User" parameterType="java.lang.String">
+    	SELECT * FROM t_user WHERE username Like '%${value}%'
+    </select>
+    
+    <!-- 增加一个用户 -->
+    <insert id="add" parameterType="org.fage.domain.User" >
+    	<!-- 在增加之后返回id给user对象 -->
+    	<selectKey order="AFTER" keyProperty="id" resultType="int">
+    		SELECT LAST_INSERT_ID()
+    	</selectKey>
+    	INSERT INTO t_user(username,birthday) values(#{username},#{birthday})
+    </insert>
+    
+    <!-- 根据id删除用户 -->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+    	DELETE FROM t_user WHERE id=#{id}
+    </delete>
+    
+    <!-- 更新用户 ,传入的是pojo对象-->
+    <update id="updateById" parameterType="org.fage.domain.User" >
+    	UPDATE t_user SET username=#{username},birthday=#{birthday} where id=#{id}
+    </update>
+    
+    <select id="findAll" resultType="org.fage.domain.User">
+   		SELECT * FROM t_user
+    </select>
+    
+    <!-- 查看数据库表中有多少条记录 -->
+    <select id="findAllCount" resultType="int">
+    	SELECT count(*) FROM t_user
+    </select>
+    
+    <!-- 复杂查询，根据年龄与模糊姓、名查询 -->
+    <select id="findByLikeNameAndBirthday" parameterType="org.fage.domain.UserQueryVo" resultType="org.fage.domain.User">
+    	SELECT * FROM t_user WHERE birthday=#{user.birthday} AND username LIKE '%${user.username}%'
+    </select>
+    
+    
+</mapper>

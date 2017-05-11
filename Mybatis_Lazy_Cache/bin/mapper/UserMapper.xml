@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.fage.mapper.UserMapper">
+	<!-- 使用ehcache -->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache" > 
+        <property name="timeToIdleSeconds" value="3600"/>
+        <property name="timeToLiveSeconds" value="3600"/>
+        <!-- 同ehcache参数maxElementsInMemory -->
+		<property name="maxEntriesLocalHeap" value="1000"/>
+		<!-- 同ehcache参数maxElementsOnDisk -->
+        <property name="maxEntriesLocalDisk" value="10000000"/>
+        <property name="memoryStoreEvictionPolicy" value="LRU"/>
+    </cache>
+    
+	<resultMap type="org.fage.domain.User" id="UserMappedOrder">
+		<id column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="createDate" property="createDate"/>
+		<!-- 一对多懒加载 -->
+		<collection property="ordersList" ofType="org.fage.domain.Orders" select="org.fage.mapper.OrdersMapper.findAll" fetchType="lazy" column="user_id" />
+	</resultMap>
+	
+	<!-- 一对一懒加载提供的子查询 -->	
+	<select id="findById" parameterType="int" resultType="org.fage.domain.User">
+		SELECT * FROM t_user WHERE id=#{id}
+	</select>
+	
+	<!-- 一对多懒加载提供的子查询 -->
+	<select id="findByIdLazyInitOrders" resultMap="UserMappedOrder" parameterType="int">
+		SELECT distinct u.*,o.user_id FROM t_user u,t_orders o WHERE o.user_id=u.id AND u.id=#{id}
+	</select>
+	
+	<insert id="add" parameterType="org.fage.domain.User" >
+		INSERT INTO t_user(username,birthday) VALUES(#{username},#{birthday})
+	</insert>
+</mapper>
